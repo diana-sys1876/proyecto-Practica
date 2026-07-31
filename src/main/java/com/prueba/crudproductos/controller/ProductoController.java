@@ -15,13 +15,11 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    // Crear un producto
     @PostMapping
     public Producto guardarProducto(@RequestBody Producto producto) {
         return productoService.guardarProducto(producto);
     }
 
-    // Listar todos los productos
     @GetMapping
     public List<Producto> listarProductos() {
         return productoService.listarProductos();
