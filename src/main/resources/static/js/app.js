@@ -5,9 +5,6 @@ const tabla = document.getElementById("tablaProductos");
 
 window.onload = listarProductos;
 
-// =======================
-// Listar productos
-// =======================
 async function listarProductos() {
 
     try {
@@ -21,6 +18,19 @@ async function listarProductos() {
         const productos = await respuesta.json();
 
         tabla.innerHTML = "";
+
+        if (productos.length === 0) {
+
+            tabla.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No hay productos registrados.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
 
         productos.forEach(producto => {
 
@@ -58,9 +68,6 @@ async function listarProductos() {
 
 }
 
-// =======================
-// Guardar o actualizar
-// =======================
 formulario.addEventListener("submit", async function (e) {
 
     e.preventDefault();
@@ -76,13 +83,9 @@ formulario.addEventListener("submit", async function (e) {
 
     };
 
-    // =======================
-    // Validaciones
-    // =======================
+    if (producto.nombre.length < 3) {
 
-    if (producto.nombre === "") {
-
-        alert("Debe ingresar el nombre.");
+        alert("El nombre debe tener al menos 3 caracteres.");
         document.getElementById("nombre").focus();
         return;
 
@@ -99,6 +102,14 @@ formulario.addEventListener("submit", async function (e) {
     if (isNaN(producto.stock) || producto.stock < 0) {
 
         alert("El stock no puede ser negativo.");
+        document.getElementById("stock").focus();
+        return;
+
+    }
+
+    if (producto.stock > 1000) {
+
+        alert("El stock no puede ser mayor a 1000 unidades.");
         document.getElementById("stock").focus();
         return;
 
@@ -156,6 +167,8 @@ formulario.addEventListener("submit", async function (e) {
         formulario.reset();
         document.getElementById("id").value = "";
 
+        document.querySelector("button[type='submit']").textContent = "Guardar Producto";
+
         listarProductos();
 
     } catch (error) {
@@ -167,9 +180,6 @@ formulario.addEventListener("submit", async function (e) {
 
 });
 
-// =======================
-// Editar
-// =======================
 async function editarProducto(id) {
 
     try {
@@ -188,6 +198,8 @@ async function editarProducto(id) {
         document.getElementById("stock").value = producto.stock;
         document.getElementById("categoria").value = producto.categoria;
 
+        document.querySelector("button[type='submit']").textContent = "Actualizar Producto";
+
     } catch (error) {
 
         console.error(error);
@@ -197,9 +209,6 @@ async function editarProducto(id) {
 
 }
 
-// =======================
-// Eliminar
-// =======================
 async function eliminarProducto(id) {
 
     const confirmar = confirm("¿Desea eliminar este producto?");
